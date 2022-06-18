@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
-require("./config/db.config")();
+const connectToDb = require("./config/db.config");
 
 const app = express();
 
@@ -12,8 +12,17 @@ app.use(morgan("dev"));
 app.use(cors({ origin: process.env.REACT_APP_URL }));
 
 const userRouter = require("./routes/user.routes");
-app.use("/api", userRouter);
+const projectRouter = require("./routes/project.routes");
+const messageRouter = require("./routes/message.routes");
 
-app.listen(Number(process.env.PORT), () =>
+
+app.use("/", userRouter);
+app.use("/", projectRouter);
+app.use("/", messageRouter);
+
+connectToDb().then(() => {
+  app.listen(Number(process.env.PORT), () =>
   console.log(`Server up and running at port ${process.env.PORT}`)
-);
+  )
+})
+

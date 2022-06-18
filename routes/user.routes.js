@@ -8,6 +8,7 @@ const attachCurrentUser = require("../middlewares/attachCurrentUser");
 
 const salt_rounds = 10;
 
+
 // Crud (CREATE) - HTTP POST
 // Criar um novo usuário
 router.post("/signup", async (req, res) => {
@@ -81,6 +82,8 @@ router.post("/login", async (req, res) => {
           name: user.name,
           email: user.email,
           _id: user._id,
+          skills: user.skills,
+          adress: user.adress,
           role: user.role,
         },
         token,
@@ -115,5 +118,18 @@ router.get("/profile", isAuthenticated, attachCurrentUser, (req, res) => {
     return res.status(500).json({ msg: JSON.stringify(err) });
   }
 });
+
+
+router.get("/allUsers",  async (req, res) => {
+  try {
+    const result = await UserModel.find({ userType : "Entity" });
+
+    return res.status(200).json(result);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ msg: "Internal server error." });
+  }
+});
+
 
 module.exports = router;
